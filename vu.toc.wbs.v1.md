@@ -1,6 +1,5 @@
 ```plantuml
 @startwbs
-
 * Ô. VŨ ĐÌNH VẠC
 ** Ô. VŨ ĐÌNH ĐÀM
 *** Ô. VŨ ĐÌNH LÀN
@@ -103,7 +102,7 @@
 ******* Ô. VŨ TUẤN ANH
 ******* Ô. VŨ HẢI ANH
 ***** B. VŨ THỊ VINH
-***** B. VŨ THỊ HOA*** 
+***** B. VŨ THỊ HOA
 ***** B. VŨ THỊ CÒM (HUÊ)
 ***** Ô. VŨ ĐÌNH SƠN
 ******* B. VŨ THỊ KHOAN
@@ -135,7 +134,7 @@
 ****** Ô. VŨ ĐÌNH DIỄN
 ******* B. VŨ THỊ THANH TÂM
 ******* Ô. VŨ ĐÌNH DƯƠNG
-***** B. VŨ THỊ THÌN (TƯƠI)*** 
+***** B. VŨ THỊ THÌN (TƯƠI)
 *** B. VŨ THỊ CHÚC
 *** B. VŨ THỊ TUYỂN
 *** Ô. VŨ ĐÌNH SĨ
@@ -251,7 +250,7 @@
 *** B. VŨ THỊ DỤC
 *** Ô. VŨ ĐÌNH DUẨN
 **** Ô. VŨ ĐÌNH KHIÊM
-** Ô. VŨ QUẢN TRẦN****** 
+** Ô. VŨ QUẢN TRẦN
 *** Ô. VŨ ĐÌNH NHUỆ
 *** B. VŨ THỊ VẤN
 *** B. VŨ THỊ LÂN
