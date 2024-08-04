@@ -269,7 +269,7 @@
 ** Ô. VŨ ĐÌNH KIM
 *** Ô. VŨ ĐÌNH KHOA
 **** Ô. VŨ ĐÌNH CỬ
-**** Ô. VŨ ĐÌNH NHÂN
+****< Ô. VŨ ĐÌNH NHÂN
 ***** Ô. VŨ TRÍ CÔNG
 ****** B. VŨ THỊ DIỆP
 ****** Ô. VŨ ĐÌNH SỨC
@@ -360,7 +360,7 @@
 **** B. VŨ THỊ THIỆN
 **** B. VŨ THỊ CHỮ
 **** B. VŨ THỊ THƯA
-*** Ô. VŨ ĐÌNH LIỄM
+***< Ô. VŨ ĐÌNH LIỄM
 **** Ô. VŨ ĐÌNH LUYỆN
 ***** Ô. VŨ ĐÌNH HỌC
 ****** B. VŨ THỊ HỒI
