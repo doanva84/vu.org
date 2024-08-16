@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization Tree</title>
+    <style>
+        .node {
+            cursor: pointer;
+        }
+        .node:hover {
+            stroke: #ff0000;
+            stroke-width: 2px;
+        }
+    .node circle {
+      fill: #fff;
+      stroke: steelblue;
+      stroke-width: 3px;
+    }
+    .node text {
+      font: 12px sans-serif;
+    }
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+    </style>
+</head>
+<body>
+    <button onclick="toggleDetails()">Toggle DOB/POB</button>
+	<label for="levelSelector">Select Max Visible Level: </label>
+    <select id="levelSelector">
+        <!-- Levels will be populated by JavaScript -->
+    </select>
+    <br><br>
+    <svg width="960" height="600"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+// Step 1: Convert your table to a hierarchical structure
+        data = [
+["Ô. VŨ ĐÌNH VẠC","Ô. VŨ ĐÌNH ĐÀM","1"],
+["Ô. VŨ ĐÌNH VẠC","Ô. VŨ ĐÌNH GIẺO","2"],
+["Ô. VŨ ĐÌNH VẠC","Ô. VŨ QUẢN TRẦN ","3"],
+["Ô. VŨ ĐÌNH VẠC","Ô. VŨ ĐÌNH KIM","4"],
+["Ô. VŨ ĐÌNH ĐÀM","Ô. VŨ ĐÌNH LÀN","5"],
+["Ô. VŨ ĐÌNH ĐÀM","Ô. VŨ ĐÌNH GIAI","6"],
+["Ô. VŨ ĐÌNH ĐÀM","B. VŨ THỊ CHÚC","7"],
+["Ô. VŨ ĐÌNH ĐÀM","B. VŨ THỊ TUYỂN","8"],
+["Ô. VŨ ĐÌNH ĐÀM","Ô. VŨ ĐÌNH SĨ","9"],
+["Ô. VŨ ĐÌNH ĐÀM","Ô. VŨ ĐÌNH UÔNG","10"],
+["Ô. VŨ ĐÌNH ĐÀM","B. VŨ THỊ HỒNG","11"],
+["Ô. VŨ ĐÌNH GIẺO","Ô. VŨ ĐÌNH GIANG","12"],
+["Ô. VŨ ĐÌNH GIẺO","B. VŨ THỊ DỤC","13"],
+["Ô. VŨ ĐÌNH GIẺO","Ô. VŨ ĐÌNH DUẨN","14"],
+["Ô. VŨ QUẢN TRẦN ","Ô. VŨ ĐÌNH NHUỆ","15"],
+["Ô. VŨ QUẢN TRẦN ","B. VŨ THỊ VẤN","16"],
+["Ô. VŨ QUẢN TRẦN ","B. VŨ THỊ LÂN","17"],
+["Ô. VŨ QUẢN TRẦN ","B. VŨ THỊ CHUNG","18"],
+["Ô. VŨ QUẢN TRẦN ","Ô. VŨ ĐÌNH ĐÔNG","19"],
+["Ô. VŨ ĐÌNH KIM","Ô. VŨ ĐÌNH KHOA","20"],
+["Ô. VŨ ĐÌNH KIM","Ô. VŨ ĐÌNH TƯ","21"],
+["Ô. VŨ ĐÌNH KIM","Ô. VŨ ĐÌNH HOÁ","22"],
+["Ô. VŨ ĐÌNH KIM","Ô. VŨ ĐÌNH LIỄM","23"],
+["Ô. VŨ ĐÌNH KIM","B. VŨ THỊ KIỂU","24"],
+["Ô. VŨ ĐÌNH KIM","B. VŨ THỊ LỊA","25"],
+["Ô. VŨ ĐÌNH KIM","B. VŨ THỊ THÂM","26"],
+["Ô. VŨ ĐÌNH GIAI","B. VŨ THỊ GIẢN","27"],
+["Ô. VŨ ĐÌNH GIAI","Ô. VŨ ĐÌNH NHỰ","28"],
+["Ô. VŨ ĐÌNH GIAI","Ô. VŨ ĐÌNH Ý","29"],
+["Ô. VŨ ĐÌNH GIAI","B. VŨ THỊ NHÀI","30"],
+["Ô. VŨ ĐÌNH GIAI","Ô. VŨ ĐÌNH CHÂM","31"],
+["Ô. VŨ ĐÌNH GIAI","Ô. VŨ ĐÌNH TAM","32"],
+["Ô. VŨ ĐÌNH SĨ","B. VŨ THỊ DŨNG","33"],
+["Ô. VŨ ĐÌNH SĨ","Ô. VŨ ĐÌNH XE","34"],
+["Ô. VŨ ĐÌNH SĨ","B. VŨ THỊ PHÁO","35"],
+["Ô. VŨ ĐÌNH SĨ","Ô. VŨ ĐÌNH TÁI","36"],
+["Ô. VŨ ĐÌNH SĨ","Ô. VŨ ĐÌNH NHỠ","37"],
+["Ô. VŨ ĐÌNH GIANG","Ô. VŨ ĐÌNH TĂNG","38"],
+["Ô. VŨ ĐÌNH GIANG","B. VŨ THỊ HOA THỪA","39"],
+["Ô. VŨ ĐÌNH GIANG","B. VŨ THỊ CHÀ","40"],
+["Ô. VŨ ĐÌNH DUẨN","Ô. VŨ ĐÌNH KHIÊM","41"],
+["Ô. VŨ ĐÌNH KHOA","Ô. VŨ ĐÌNH CỬ","42"],
+["Ô. VŨ ĐÌNH KHOA","Ô.VŨ ĐÌNH ĐỒN","43"],
+["Ô. VŨ ĐÌNH KHOA","B. VŨ THỊ PHỤNG","44"],
+["Ô. VŨ ĐÌNH KHOA","B. VŨ THỊ PHAO","45"],
+["Ô. VŨ ĐÌNH KHOA","Ô. VŨ ĐÌNH ĐIỀN","46"],
+["Ô. VŨ ĐÌNH KHOA","Ô. VŨ ĐÌNH MỤC","47"],
+["Ô. VŨ ĐÌNH TƯ","Ô. VŨ ĐÌNH CÔI","48"],
+["Ô. VŨ ĐÌNH TƯ","B. VŨ THỊ THUẬT","49"],
+["Ô. VŨ ĐÌNH TƯ","B. VŨ THỊ NGUYỆN","50"],
+["Ô. VŨ ĐÌNH TƯ","B. VŨ THỊ DĨNH","51"],
+["Ô. VŨ ĐÌNH HOÁ","B. VŨ THỊ THIỆN","52"],
+["Ô. VŨ ĐÌNH HOÁ","B. VŨ THỊ CHỮ","53"],
+["Ô. VŨ ĐÌNH HOÁ","B. VŨ THỊ THƯA","54"],
+["Ô. VŨ ĐÌNH LIỄM","Ô. VŨ ĐÌNH LUYỆN","55"],
+["Ô. VŨ ĐÌNH LIỄM","Ô. VŨ ĐÌNH TẬP","56"],
+["Ô. VŨ ĐÌNH LIỄM","Ô. VŨ ĐÌNH THÀNH","57"],
+["Ô. VŨ ĐÌNH LIỄM","Ô. VŨ ĐÌNH CÔNG","58"],
+["Ô. VŨ ĐÌNH LIỄM","Ô. VŨ ĐÌNH CÁN","59"],
+["Ô. VŨ ĐÌNH NHỰ","B. VŨ THỊ MIỄN","60"],
+["Ô. VŨ ĐÌNH NHỰ","Ô. VŨ ĐÌNH CẨN","61"],
+["Ô. VŨ ĐÌNH NHỰ","B. VŨ THỊ NẤU","62"],
+["Ô. VŨ ĐÌNH NHỰ","Ô. VŨ ĐÌNH BÀN","63"],
+["Ô. VŨ ĐÌNH Ý","B. VŨ THỊ MẾN","64"],
+["Ô. VŨ ĐÌNH CHÂM","B. VŨ THỊ THƯỚC","65"],
+["Ô. VŨ ĐÌNH CHÂM","Ô. VŨ ĐÌNH TẦM","66"],
+["Ô. VŨ ĐÌNH TAM","Ô. VŨ ĐÌNH TỨ","67"],
+["Ô. VŨ ĐÌNH TAM","B. VŨ THỊ VINH","68"],
+["Ô. VŨ ĐÌNH TAM","B. VŨ THỊ HOA ","69"],
+["Ô. VŨ ĐÌNH TAM","B. VŨ THỊ CÒM (HUÊ)","70"],
+["Ô. VŨ ĐÌNH TAM","Ô. VŨ ĐÌNH SƠN","71"],
+["Ô. VŨ ĐÌNH TAM","Ô. VŨ ĐÌNH CANH","72"],
+["Ô. VŨ ĐÌNH TAM","B. VŨ THỊ THÌN (TƯƠI) ","73"],
+["Ô. VŨ ĐÌNH XE","O. VŨ ĐÌNH BỈNH","74"],
+["Ô. VŨ ĐÌNH XE","Ô. VŨ ĐÌNH BẦU","75"],
+["Ô. VŨ ĐÌNH XE","Ô. VŨ ĐÌNH TUY","76"],
+["Ô. VŨ ĐÌNH TÁI","B. VŨ THỊ RUYÊN(CHƯỚC)","77"],
+["Ô. VŨ ĐÌNH TÁI","Ô. VŨ ĐÌNH HỒI","78"],
+["Ô. VŨ ĐÌNH TĂNG","Ô. VŨ ĐÌNH KHOÁY","79"],
+["Ô. VŨ ĐÌNH TĂNG","B. VŨ THỊ BÌ","80"],
+["Ô. VŨ ĐÌNH TĂNG","B. VŨ THỊ BẠCH","81"],
+["Ô. VŨ ĐÌNH TĂNG","Ô. VŨ ĐÌNH XƯƠNG","82"],
+["Ô. VŨ ĐÌNH CỬ","Ô. VŨ ĐÌNH NHÂN","83"],
+["Ô. VŨ ĐÌNH CỬ","Ô. VŨ ĐÌNH TÚ","84"],
+["Ô. VŨ ĐÌNH CỬ","Ô. VŨ ĐÌNH TÀI","85"],
+["Ô. VŨ ĐÌNH CỬ","B. VŨ THỊ NGỌ","86"],
+["Ô. VŨ ĐÌNH CỬ","Ô. VŨ ĐÌNH TẤN","87"],
+["Ô. VŨ ĐÌNH ĐIỀN","B. VŨ THỊ VIÊN","88"],
+["Ô. VŨ ĐÌNH ĐIỀN","Ô. VŨ ĐÌNH ĐIỂN","89"],
+["Ô. VŨ ĐÌNH ĐIỀN","B. VŨ THỊ CĂN","90"],
+["Ô. VŨ ĐÌNH ĐIỀN","B. VŨ THỊ NGUYÊN","91"],
+["Ô. VŨ ĐÌNH ĐIỀN","B. VŨ THỊ LẠI","92"],
+["Ô. VŨ ĐÌNH ĐIỀN","Ô. VŨ ĐÌNH TỊCH","93"],
+["Ô. VŨ ĐÌNH ĐIỀN","B. VŨ THỊ BỘ","94"],
+["Ô. VŨ ĐÌNH ĐIỀN","Ô. VŨ ĐÌNH BẢN","95"],
+["Ô. VŨ ĐÌNH MỤC","B. VŨ THỊ PHƯƠNG","96"],
+["Ô. VŨ ĐÌNH MỤC","B. VŨ THỊ PHI","97"],
+["Ô. VŨ ĐÌNH MỤC","B. VŨ THỊ NINH","98"],
+["Ô. VŨ ĐÌNH MỤC","B. VŨ THỊ KHANG","99"],
+["Ô. VŨ ĐÌNH MỤC","B. VŨ THỊ THOAN","100"],
+["Ô. VŨ ĐÌNH MỤC","Ô. VŨ ĐÌNH QUANG","101"],
+["Ô. VŨ ĐÌNH MỤC","Ô. VŨ ĐÌNH VỊNH","102"],
+["Ô. VŨ ĐÌNH LUYỆN","Ô. VŨ ĐÌNH HỌC","103"],
+["Ô. VŨ ĐÌNH LUYỆN","Ô. VŨ ĐÌNH BỔ","104"],
+["Ô. VŨ ĐÌNH LUYỆN","B. VŨ THỊ (B. NGHIỆP)","105"],
+["Ô. VŨ ĐÌNH TẬP","B. VŨ THỊ THANH","106"],
+["Ô. VŨ ĐÌNH TẬP","B. VŨ THỊ CÔNG","107"],
+["Ô. VŨ ĐÌNH TẬP","B. VŨ THỊ THẤU","108"],
+["Ô. VŨ ĐÌNH TẬP","Ô. VŨ ĐÌNH THUỘC","109"],
+["Ô. VŨ ĐÌNH TẬP","B. VŨ THỊ CỎN","110"],
+["Ô. VŨ ĐÌNH THÀNH","B. VŨ THỊ THƠM","111"],
+["Ô. VŨ ĐÌNH THÀNH","B. VŨ THỊ THO","112"],
+["Ô. VŨ ĐÌNH CÁN","B. VŨ THỊ CÂN","113"],
+["Ô. VŨ ĐÌNH CÁN","B. VŨ THỊ THÁI","114"],
+["Ô. VŨ ĐÌNH CÁN","Ô. VŨ ĐÌNH SƠN","115"],
+["Ô. VŨ ĐÌNH CÁN","B. VŨ THỊ TƯƠI","116"],
+["Ô. VŨ ĐÌNH BÀN","Ô. VŨ ĐÌNH THAI","117"],
+["Ô. VŨ ĐÌNH BÀN","Ô. VŨ ĐÌNH LUẬN","118"],
+["Ô. VŨ ĐÌNH BÀN","Ô. VŨ ĐÌNH LÂN","119"],
+["Ô. VŨ ĐÌNH BÀN","B. VŨ THỊ VIẾT","120"],
+["Ô. VŨ ĐÌNH BÀN","Ô. VŨ ĐÌNH BIÊN","121"],
+["Ô. VŨ ĐÌNH BÀN","Ô. VŨ ĐÌNH CU(?)","122"],
+["Ô. VŨ ĐÌNH TẦM","B. VŨ THỊ CẢNH","123"],
+["Ô. VŨ ĐÌNH TẦM","Ô. VŨ ĐÌNH TÍCH","124"],
+["Ô. VŨ ĐÌNH TẦM","B. VŨ THỊ ĐỎ","125"],
+["Ô. VŨ ĐÌNH TẦM","Ô. VŨ ĐÌNH THIẾT","126"],
+["Ô. VŨ ĐÌNH TẦM","Ô. VŨ ĐÌNH THAO","127"],
+["Ô. VŨ ĐÌNH TẦM","Ô. VŨ ĐÌNH TÀI","128"],
+["Ô. VŨ ĐÌNH TỨ","Ô. VŨ ĐÌNH BẢY","129"],
+["Ô. VŨ ĐÌNH TỨ","Ô. VŨ ĐÌNH CÀN","130"],
+["Ô. VŨ ĐÌNH TỨ","Ô. VŨ ĐÌNH TOAN","131"],
+["Ô. VŨ ĐÌNH TỨ","Ô. VŨ ĐÌNH TÒNG","132"],
+["Ô. VŨ ĐÌNH TỨ","Ô. VŨ ĐÌNH TÂN","133"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ KHOAN","134"],
+["Ô. VŨ ĐÌNH SƠN","Ô. VŨ ĐÌNH SÂM","135"],
+["Ô. VŨ ĐÌNH SƠN","Ô. VŨ ĐÌNH NHUNG","136"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ NHU","137"],
+["Ô. VŨ ĐÌNH SƠN","Ô. VŨ ĐÌNH DUNG","138"],
+["Ô. VŨ ĐÌNH CANH","Ô. VŨ ĐÌNH ĐIỂN","139"],
+["Ô. VŨ ĐÌNH CANH","B. VŨ THỊ LƯỢN","140"],
+["Ô. VŨ ĐÌNH CANH","B. VŨ THỊ VÂN","141"],
+["Ô. VŨ ĐÌNH CANH","Ô. VŨ ĐÌNH DIỄN","142"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ SỬU","143"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ BÌNH","144"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ ĐỎ","145"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ TẸO","146"],
+["O. VŨ ĐÌNH BỈNH","Ô. VŨ ĐÌNH HOÀNG","147"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ LIÊN","148"],
+["O. VŨ ĐÌNH BỈNH","B. VŨ THỊ VẦN","149"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ NHUẦN","150"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ LÀ","151"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ THANH","152"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ QUẾ","153"],
+["Ô. VŨ ĐÌNH BẦU","Ô. VŨ ĐÌNH LƯỠNG","154"],
+["Ô. VŨ ĐÌNH BẦU","Ô. VŨ ĐÌNH LỰ","155"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ VÂN","156"],
+["Ô. VŨ ĐÌNH BẦU","Ô. VŨ ĐÌNH LANH","157"],
+["Ô. VŨ ĐÌNH BẦU","B. VŨ THỊ DUNG","158"],
+["Ô. VŨ ĐÌNH TUY","Ô. VŨ ĐÌNH TIẾN","159"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ THƠ","160"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ KÝ","161"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ THÊU","162"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ THUYẾT","163"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ TUYẾT","164"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ TÂN","165"],
+["Ô. VŨ ĐÌNH TUY","B. VŨ THỊ THIẾP","166"],
+["Ô. VŨ ĐÌNH HỒI","B. VŨ THỊ LAN","167"],
+["Ô. VŨ ĐÌNH HỒI","Ô. VŨ ĐÌNH HỘI","168"],
+["Ô. VŨ ĐÌNH HỒI","Ô. VŨ ĐÌNH CAN","169"],
+["Ô. VŨ ĐÌNH HỒI","Ô. VŨ ĐÌNH HỢP","170"],
+["Ô. VŨ ĐÌNH HỒI","Ô. VŨ ĐÌNH HỌP","171"],
+["Ô. VŨ ĐÌNH HỒI","B. VŨ THỊ HƯƠNG","172"],
+["Ô. VŨ ĐÌNH HỒI","Ô. VŨ ĐÌNH NAM","173"],
+["Ô. VŨ ĐÌNH HỒI","B. VŨ THỊ AN","174"],
+["Ô. VŨ ĐÌNH HỒI","B. VŨ THỊ TUYẾT","175"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH TRÍ","176"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH TÍN","177"],
+["Ô. VŨ ĐÌNH KHOÁY","B. VŨ THỊ HỒNG","178"],
+["Ô. VŨ ĐÌNH KHOÁY","B. VŨ THỊ HOA","179"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH LAN","180"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH HUỆ","181"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH ĐỎ","182"],
+["Ô. VŨ ĐÌNH KHOÁY","B. VŨ THỊ HUẾ","183"],
+["Ô. VŨ ĐÌNH KHOÁY","B. VŨ THỊ CÚC","184"],
+["Ô. VŨ ĐÌNH KHOÁY","Ô. VŨ ĐÌNH HOÈ","185"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô. VŨ ĐÌNH CẢI","186"],
+["Ô. VŨ ĐÌNH XƯƠNG","B. VŨ THỊ TẠO","187"],
+["Ô. VŨ ĐÌNH XƯƠNG","B. VŨ THỊ BÉ","188"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô. VŨ ĐÌNH TÍNH","189"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô. VŨ ĐÌNH THÔNG","190"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô.VŨ ĐÌNH THẠO","191"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô. VŨ ĐÌNH TIẾN","192"],
+["Ô. VŨ ĐÌNH XƯƠNG","Ô. VŨ ĐÌNH BINH","193"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ TRÍ CÔNG","194"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH ĐOÀN","195"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH VĂN","196"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH THƯ","197"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH TÂM","198"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH TOÁN","199"],
+["Ô. VŨ ĐÌNH NHÂN","Ô. VŨ ĐÌNH MINH","200"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ ĐÌNH QUẢNG","201"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ NGỌC CẦM","202"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ NGỌC HƯỞNG(KỲ)","203"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ QUANG VINH(THÀNH)","204"],
+["Ô. VŨ ĐÌNH TẤN","Ô. VŨ ĐÌNH TÂN","205"],
+["Ô. VŨ ĐÌNH TẤN","B. VŨ THỊ TIẾN","206"],
+["Ô. VŨ ĐÌNH TẤN","B. VŨ THỊ DUYÊN","207"],
+["Ô. VŨ ĐÌNH ĐIỂN","B. VŨ THỊ QUYÊN","208"],
+["Ô. VŨ ĐÌNH ĐIỂN","Ô. VŨ ĐÌNH ĐIỆP","209"],
+["Ô. VŨ ĐÌNH ĐIỂN","B. VŨ THỊ OÁNH","210"],
+["Ô. VŨ ĐÌNH ĐIỂN","B. VŨ THỊ UYÊN","211"],
+["Ô. VŨ ĐÌNH TỊCH","Ô. VŨ ĐÌNH THANH","212"],
+["Ô. VŨ ĐÌNH TỊCH","B. VŨ THỊ HOA","213"],
+["Ô. VŨ ĐÌNH TỊCH","B. VŨ THỊ HUỆ","214"],
+["Ô. VŨ ĐÌNH TỊCH","Ô. VŨ ĐÌNH RỒNG","215"],
+["Ô. VŨ ĐÌNH BẢN","Ô. VŨ ĐÌNH THẮNG","216"],
+["Ô. VŨ ĐÌNH BẢN","Ô. VŨ ĐÌNH HIẾU","217"],
+["Ô. VŨ ĐÌNH QUANG","Ô. VŨ ĐÌNH MINH","218"],
+["Ô. VŨ ĐÌNH QUANG","B. VŨ THỊ HÀ","219"],
+["Ô. VŨ ĐÌNH QUANG","Ô. VŨ ĐÌNH HẢI","220"],
+["Ô. VŨ ĐÌNH HỌC","B. VŨ THỊ HỒI","221"],
+["Ô. VŨ ĐÌNH HỌC","Ô. VŨ ĐÌNH HAI","222"],
+["Ô. VŨ ĐÌNH HỌC","Ô. VŨ ĐÌNH BA","223"],
+["Ô. VŨ ĐÌNH HỌC","Ô. VŨ ĐÌNH BẢY","224"],
+["Ô. VŨ ĐÌNH THUỘC","B. VŨ THỊ MÙI","225"],
+["Ô. VŨ ĐÌNH THUỘC","B. VŨ THỊ HƯƠNG","226"],
+["Ô. VŨ ĐÌNH THUỘC","Ô. VŨ ĐÌNH MÃO","227"],
+["Ô. VŨ ĐÌNH THUỘC","Ô. VŨ ĐÌNH ĐẠI","228"],
+["Ô. VŨ ĐÌNH THUỘC","Ô. VŨ ĐÌNH ĐÍNH","229"],
+["Ô. VŨ ĐÌNH THUỘC","B. VŨ THỊ HOA","230"],
+["Ô. VŨ ĐÌNH THUỘC","B. VŨ THỊ ĐÀO","231"],
+["Ô. VŨ ĐÌNH THUỘC","B. VŨ THỊ LIỄU","232"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ HƯƠNG","233"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ NGÃI","234"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ HẢI","235"],
+["Ô. VŨ ĐÌNH SƠN","Ô. VŨ ĐÌNH THUỶ","236"],
+["Ô. VŨ ĐÌNH SƠN","B. VŨ THỊ MIẾN","237"],
+["Ô. VŨ ĐÌNH LÂN","Ô. VŨ ĐÌNH VĂN","238"],
+["Ô. VŨ ĐÌNH LÂN","B. VŨ THỊ MAI","239"],
+["Ô. VŨ ĐÌNH LÂN","B. VŨ THỊ THANH","240"],
+["Ô. VŨ ĐÌNH LÂN","B. VŨ THỊ VÂN","241"],
+["Ô. VŨ ĐÌNH LÂN","Ô. VŨ ĐÌNH CƯỜNG","242"],
+["Ô. VŨ ĐÌNH BIÊN","Ô. VŨ ĐÌNH HÙNG","243"],
+["Ô. VŨ ĐÌNH BIÊN","B. VŨ THỊ PHƯƠNG","244"],
+["Ô. VŨ ĐÌNH BIÊN","B. VŨ THỊ LAN","245"],
+["Ô. VŨ ĐÌNH THIẾT","B. VŨ THỊ TRANG","246"],
+["Ô. VŨ ĐÌNH THIẾT","B. VŨ THỊ THƯƠNG","247"],
+["Ô. VŨ ĐÌNH THIẾT","B. VŨ THỊ THƠM","248"],
+["Ô. VŨ ĐÌNH THIẾT","B. VŨ THỊ THO","249"],
+["Ô. VŨ ĐÌNH THAO","Ô. VŨ ĐÌNH TIN","250"],
+["Ô. VŨ ĐÌNH THAO","Ô. VŨ ĐÌNH TUNG","251"],
+["Ô. VŨ ĐÌNH THAO","B. VŨ THỊ TÂM","252"],
+["Ô. VŨ ĐÌNH THAO","B. VŨ THỊ THU","253"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ ĐÌNH TUẤN","254"],
+["Ô. VŨ ĐÌNH TÀI","Ô. VŨ ĐÌNH TUẦN","255"],
+["Ô. VŨ ĐÌNH BẢY","B. VŨ THỊ MIỀN","256"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH NAM","257"],
+["Ô. VŨ ĐÌNH BẢY","B. VŨ THỊ BẮC","258"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH BẰNG","259"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH THUẤN","260"],
+["Ô. VŨ ĐÌNH TÒNG","Ô. VŨ ĐÌNH TUẤN","261"],
+["Ô. VŨ ĐÌNH TÒNG","B. VŨ THỊ THUÝ","262"],
+["Ô. VŨ ĐÌNH TÒNG","Ô. VŨ ĐÌNH TOÀN","263"],
+["Ô. VŨ ĐÌNH TÂN","Ô. VŨ ĐÌNH TIẾN","264"],
+["Ô. VŨ ĐÌNH TÂN","Ô. VŨ ĐÌNH TIÊN","265"],
+["Ô. VŨ ĐÌNH TÂN","B. VŨ THỊ NGA","266"],
+["Ô. VŨ ĐÌNH SÂM","Ô. VŨ THANH HẢI","267"],
+["Ô. VŨ ĐÌNH NHUNG","Ô. VŨ ĐÌNH TÙNG","268"],
+["Ô. VŨ ĐÌNH NHUNG","Ô. VŨ VĂN THÀNH","269"],
+["Ô. VŨ ĐÌNH DUNG","B. VŨ VÂN ANH","270"],
+["Ô. VŨ ĐÌNH DUNG","Ô. VŨ MẠNH QUÂN","271"],
+["Ô. VŨ ĐÌNH ĐIỂN","B. VŨ THỊ THẮM","272"],
+["Ô. VŨ ĐÌNH ĐIỂN","Ô. VŨ ĐÌNH ĐẢM","273"],
+["Ô. VŨ ĐÌNH ĐIỂN","Ô. VŨ ĐÌNH ĐAM","274"],
+["Ô. VŨ ĐÌNH DIỄN","B. VŨ THỊ THANH TÂM","275"],
+["Ô. VŨ ĐÌNH DIỄN","Ô. VŨ ĐÌNH DƯƠNG","276"],
+["Ô. VŨ ĐÌNH HOÀNG","B. VŨ THỊ HOA","277"],
+["Ô. VŨ ĐÌNH HOÀNG","Ô. VŨ ĐÌNH VIỆT","278"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ ĐÌNH TIỆN","279"],
+["Ô. VŨ ĐÌNH TIẾN","B. VŨ THỊ HUẾ","280"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ ĐÌNH TUẤN","281"],
+["Ô. VŨ ĐÌNH TIẾN","B. VŨ THỊ HOA","282"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ ĐÌNH THỨC","283"],
+["Ô. VŨ ĐÌNH HỘI","B. VŨ THỊ LỤA","284"],
+["Ô. VŨ ĐÌNH HỘI","Ô. VŨ ĐÌNH TRƯỜNG","285"],
+["Ô. VŨ ĐÌNH HỘI","B. VŨ THỊ LÀNH","286"],
+["Ô. VŨ ĐÌNH HỘI","Ô. VŨ ĐÌNH THỌ","287"],
+["Ô. VŨ ĐÌNH CAN","Ô. VŨ ĐÌNH SÁNG","288"],
+["Ô. VŨ ĐÌNH CAN","Ô. VŨ ĐÌNH SANG","289"],
+["Ô. VŨ ĐÌNH HỢP","Ô. VŨ ĐÌNH HOÀ","290"],
+["Ô. VŨ ĐÌNH HỢP","Ô. VŨ ĐÌNH HIỆP","291"],
+["Ô. VŨ ĐÌNH HỢP","Ô. VŨ ĐÌNH TIỆP","292"],
+["Ô. VŨ ĐÌNH HỢP","Ô. VŨ ĐÌNH HÙNG","293"],
+["Ô. VŨ ĐÌNH HỢP","Ô. VŨ ĐÌNH HƯNG","294"],
+["Ô. VŨ ĐÌNH HỌP","Ô. VŨ MINH HIẾU","295"],
+["Ô. VŨ ĐÌNH NAM","B. VŨ THỊ VÂN","296"],
+["Ô. VŨ ĐÌNH NAM","B. VŨ THỊ VIỆT HÀ","297"],
+["Ô. VŨ ĐÌNH NAM","B. VŨ THỊ THUÝ","298"],
+["Ô. VŨ ĐÌNH NAM","B. VŨ THỊ PHƯƠNG","299"],
+["Ô. VŨ ĐÌNH NAM","Ô. VŨ ĐÌNH ĐẠT","300"],
+["Ô. VŨ ĐÌNH LAN","B. VŨ THỊ HIỀN","301"],
+["Ô. VŨ ĐÌNH LAN","Ô. VŨ MẠNH HÙNG","302"],
+["Ô. VŨ ĐÌNH HUỆ","B. VŨ THỊ THU","303"],
+["Ô. VŨ ĐÌNH HUỆ","B. VŨ THỊ HÀ","304"],
+["Ô. VŨ ĐÌNH HUỆ","B. VŨ THỊ HẢO","305"],
+["Ô. VŨ ĐÌNH HUỆ","B. VŨ THỊ HÀO","306"],
+["Ô. VŨ ĐÌNH HUỆ","B. VŨ THỊ MAI","307"],
+["Ô. VŨ ĐÌNH HOÈ","B. VŨ THỊ LINH","308"],
+["Ô. VŨ ĐÌNH HOÈ","Ô. VŨ ĐÌNH DŨNG","309"],
+["Ô. VŨ ĐÌNH CẢI","Ô. VŨ HUY CHUẨN","310"],
+["Ô. VŨ ĐÌNH CẢI","Ô. VŨ ANH ĐOÁN","311"],
+["Ô. VŨ ĐÌNH CẢI","B. VŨ THỊ HỒNG TỚI","312"],
+["Ô. VŨ ĐÌNH TÍNH","Ô. VŨ VIỆT ANH","313"],
+["Ô. VŨ ĐÌNH TÍNH","Ô. VŨ TIẾN ĐẠT","314"],
+["Ô. VŨ ĐÌNH THÔNG","Ô. VŨ ĐÌNH THÁI","315"],
+["Ô. VŨ ĐÌNH THÔNG","B. VŨ THỊ THUỶ TRÚC","316"],
+["Ô.VŨ ĐÌNH THẠO","Ô. VŨ ĐÌNH THÀNH","317"],
+["Ô.VŨ ĐÌNH THẠO","B. VŨ THỊ PHƯƠNG THẢO","318"],
+["Ô.VŨ ĐÌNH THẠO","B. VŨ THỊ PHƯƠNG THUÝ","319"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ ĐÌNH TIỀN","320"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ ĐÌNH ĐÔ","321"],
+["Ô. VŨ ĐÌNH BINH","Ô.VŨ ĐÌNH TUẤN","322"],
+["Ô. VŨ ĐÌNH BINH","B. VŨ THỊ THU HẰNG","323"],
+["Ô. VŨ TRÍ CÔNG","B. VŨ THỊ DIỆP","324"],
+["Ô. VŨ TRÍ CÔNG","Ô. VŨ ĐÌNH SỨC","325"],
+["Ô. VŨ TRÍ CÔNG","B. VŨ THỊ HÀ","326"],
+["Ô. VŨ ĐÌNH ĐOÀN","B. VŨ THỊ HOÀNG YẾN","327"],
+["Ô. VŨ ĐÌNH ĐOÀN","Ô. VŨ ĐÌNH QUÂN","328"],
+["Ô. VŨ ĐÌNH VĂN","B. VŨ THỊ OANH","329"],
+["Ô. VŨ ĐÌNH VĂN","B. VŨ THỊ NGÂN","330"],
+["Ô. VŨ ĐÌNH THƯ","B. VŨ THỊ TRANG","331"],
+["Ô. VŨ ĐÌNH THƯ","B. VŨ THỊ NHUNG","332"],
+["Ô. VŨ ĐÌNH THƯ","B. VŨ THỊ GẤM","333"],
+["Ô. VŨ ĐÌNH TÂM","Ô. VŨ ĐÌNH TUẤN","334"],
+["Ô. VŨ ĐÌNH TÂM","Ô. VŨ ĐÌNH TOÀN","335"],
+["Ô. VŨ ĐÌNH TOÁN","Ô.VŨ ĐÌNH HIẾU","336"],
+["Ô. VŨ ĐÌNH TOÁN","B. VŨ THỊ QUỲNH","337"],
+["Ô. VŨ ĐÌNH TOÁN","Ô. VŨ ĐÌNH TÙNG","338"],
+["Ô. VŨ ĐÌNH QUẢNG","B. VŨ THỊ THẢO","339"],
+["Ô. VŨ ĐÌNH QUẢNG","B. VŨ THỊ THUYÊN","340"],
+["Ô. VŨ NGỌC CẦM","Ô. VŨ ĐÌNH ĐỨC","341"],
+["Ô. VŨ NGỌC HƯỞNG(KỲ)","B. VŨ THỊ KHANH","342"],
+["Ô. VŨ NGỌC HƯỞNG(KỲ)","Ô. VŨ NGỌC PHƯƠNG","343"],
+["Ô. VŨ QUANG VINH(THÀNH)","Ô. VŨ ĐÌNH DUY","344"],
+["Ô. VŨ QUANG VINH(THÀNH)","B. VŨ THỊ QUỲNH","345"],
+["Ô. VŨ ĐÌNH TÂN","Ô. VŨ TUẤN ANH","346"],
+["Ô. VŨ ĐÌNH TÂN","Ô. VŨ HẢI ANH","347"],
+["Ô. VŨ ĐÌNH HAI","Ô. VŨ ĐÌNH MÙI","348"],
+["Ô. VŨ ĐÌNH HAI","B. VŨ THỊ DẬU","349"],
+["Ô. VŨ ĐÌNH HAI","Ô. VŨ ĐÌNH ĐỆ","350"],
+["Ô. VŨ ĐÌNH HAI","B. VŨ THỊ NHẪN","351"],
+["Ô. VŨ ĐÌNH HAI","Ô. VŨ ĐÌNH HUYNH","352"],
+["Ô. VŨ ĐÌNH HAI","Ô. VŨ ĐÌNH NẠI","353"],
+["Ô. VŨ ĐÌNH HAI","B. VŨ THỊ KHUYÊN","354"],
+["Ô. VŨ ĐÌNH BA","Ô. VŨ ĐÌNH OÁNH","355"],
+["Ô. VŨ ĐÌNH BA","B. VŨ THỊ THAO","356"],
+["Ô. VŨ ĐÌNH BA","Ô. VŨ ĐÌNH THĂNG","357"],
+["Ô. VŨ ĐÌNH BA","B. VŨ THỊ THÊU","358"],
+["Ô. VŨ ĐÌNH BA","B. VŨ THỊ VUI","359"],
+["Ô. VŨ ĐÌNH BẢY","B. VŨ THỊ MÀU","360"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH DOANH","361"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH KHANH","362"],
+["Ô. VŨ ĐÌNH BẢY","Ô. VŨ ĐÌNH LỢI","363"],
+["Ô. VŨ ĐÌNH VĂN","Ô. VŨ TRỌNG HIẾN","364"],
+["Ô. VŨ ĐÌNH VĂN","Ô. VŨ ĐÌNH HUY","365"],
+["Ô. VŨ ĐÌNH CƯỜNG","Ô. VŨ TRẦN BẢO NAM","366"],
+["Ô. VŨ ĐÌNH CƯỜNG","Ô. VŨ TRẦN MINH QUÂN","367"],
+["Ô. VŨ ĐÌNH HÙNG","Ô. VŨ TIẾN DŨNG","368"],
+["Ô. VŨ ĐÌNH HÙNG","Ô. VŨ ĐÌNH PHI","369"],
+["Ô. VŨ ĐÌNH TIN","Ô. VŨ ĐÌNH THÔNG","370"],
+["Ô. VŨ ĐÌNH TUẤN","B. VŨ THỊ TÚ","371"],
+["Ô. VŨ ĐÌNH TUẤN","Ô. VŨ ĐÌNH HOÀNG","372"],
+["Ô. VŨ ĐÌNH TUẤN","Ô. VŨ ĐÌNH HUY","373"],
+["Ô. VŨ ĐÌNH TUẦN","B. VŨ THỊ NHI","374"],
+["Ô. VŨ ĐÌNH TUẦN","B. VŨ THỊ HƯƠNG","375"],
+["Ô. VŨ ĐÌNH TUẦN","B. VŨ THỊ NGỌC","376"],
+["Ô. VŨ ĐÌNH NAM","B. VŨ THỊ HOA","377"],
+["Ô. VŨ ĐÌNH NAM","Ô. VŨ ĐÌNH PHƯƠNG","378"],
+["Ô. VŨ ĐÌNH BẰNG","Ô. VŨ LÊ QUỐC BẢO","379"],
+["Ô. VŨ ĐÌNH BẰNG","Ô. VŨ LÊ THIÊN BẢO","380"],
+["Ô. VŨ ĐÌNH THUẤN","Ô. VŨ MINH ĐỨC","381"],
+["Ô. VŨ ĐÌNH TIẾN","Ô. VŨ NHẬT THĂNG","382"],
+["Ô. VŨ ĐÌNH TIẾN","B. VŨ TUYẾT MAI","383"],
+["Ô. VŨ ĐÌNH TIẾN","B. VŨ ANH THƯ","384"],
+["Ô. VŨ THANH HẢI","B. VŨ NGỌC CHÂU ANH","385"],
+["Ô. VŨ THANH HẢI","Ô. VŨ MINH NHẬT","386"],
+["Ô. VŨ ĐÌNH TÙNG","Ô. VŨ GIA HUÂN","387"],
+["Ô. VŨ ĐÌNH TÙNG","B. VŨ TƯỜNG VI","388"],
+["Ô. VŨ ĐÌNH ĐẢM","Ô. VŨ MINH LONG","389"],
+["Ô. VŨ ĐÌNH ĐẢM","B. VŨ THỊ BÍCH PHƯƠNG","390"],
+["Ô. VŨ ĐÌNH ĐAM","B. VŨ THỊ KHÁNH VI","391"],
+["Ô. VŨ ĐÌNH TIỆN","Ô. VŨ ĐÌNH TÀI","392"],
+["Ô. VŨ ĐÌNH TIỆN","Ô. VŨ ĐÌNH LỘC","393"],
+["Ô. VŨ ĐÌNH TIỆN","B. VŨ THỊ NGA","394"],
+["Ô. VŨ ĐÌNH TRƯỜNG","B. VŨ HÀ TRANG","395"],
+["Ô. VŨ ĐÌNH TRƯỜNG","B. VŨ HÀ LINH","396"],
+["Ô. VŨ ĐÌNH HOÀ","Ô. VŨ THANH BÌNH","397"],
+["Ô. VŨ ĐÌNH HOÀ","B. VŨ THỊ TRANG","398"],
+["Ô. VŨ ĐÌNH HIỆP","B. VŨ THỊ GIANG","399"],
+["Ô. VŨ ĐÌNH HIỆP","Ô. VŨ THÀNH LUÂN","400"],
+["Ô. VŨ MẠNH HÙNG","B. VŨ HUYỀN ANH","401"],
+["Ô. VŨ HUY CHUẨN","B. VŨ THỊ MINH NGỌC","402"],
+["Ô. VŨ HUY CHUẨN","Ô. VŨ MINH KHANG","403"],
+["Ô. VŨ HUY CHUẨN","B. VŨ AN NHIÊN","404"],
+["Ô. VŨ ANH ĐOÁN","B. VŨ HOÀNG MAI","405"],
+["Ô. VŨ ANH ĐOÁN","Ô. VŨ HOÀNG TUẤN KIỆT","406"],
+["Ô. VŨ VIỆT ANH","Ô. VŨ XUÂN THÀNH","407"],
+["Ô. VŨ ĐÌNH THÁI","Ô. VŨ MINH","408"],
+["Ô. VŨ ĐÌNH SỨC","B. VŨ THỊ MAI","409"],
+["Ô. VŨ ĐÌNH SỨC","B. VŨ LÊ THANH TÚ","410"],
+["Ô. VŨ ĐÌNH SỨC","Ô. VŨ PHÚC LÂM","411"],
+["Ô. VŨ ĐÌNH QUÂN","B. VŨ BẢO NGỌC","412"],
+["Ô. VŨ ĐÌNH QUÂN","B. VŨ THỊ NGỌC HÂN","413"],
+["Ô. VŨ TUẤN ANH","Ô. VŨ GIA LONG","414"],
+["Ô. VŨ ĐÌNH MÙI","Ô. VŨ ĐÌNH HÀ","415"],
+["Ô. VŨ ĐÌNH MÙI","Ô. VŨ ĐÌNH HOẠT","416"],
+["Ô. VŨ ĐÌNH MÙI","B. VŨ THỊ HUYỀN","417"],
+["Ô. VŨ ĐÌNH MÙI","Ô. VŨ ĐÌNH LAN","418"],
+["Ô. VŨ ĐÌNH MÙI","B. VŨ THỊ HƯƠNG","419"],
+["Ô. VŨ ĐÌNH ĐỆ","Ô. VŨ ĐÌNH HƯNG","420"],
+["Ô. VŨ ĐÌNH ĐỆ","Ô. VŨ ĐÌNH LONG","421"],
+["Ô. VŨ ĐÌNH HUYNH","Ô. VŨ ĐÌNH HƯNG","422"],
+["Ô. VŨ ĐÌNH HUYNH","Ô. VŨ ĐÌNH HẬU","423"],
+["Ô. VŨ ĐÌNH HUYNH","Ô. VŨ ĐÌNH KHÁNH","424"],
+["Ô. VŨ ĐÌNH NẠI","Ô. VŨ ĐÌNH NAM","425"],
+["Ô. VŨ ĐÌNH NẠI","B. VŨ THỊ NGUYÊN","426"],
+["Ô. VŨ ĐÌNH THĂNG","B. VŨ THỊ DUNG","427"],
+["Ô. VŨ ĐÌNH THĂNG","B. VŨ THỊ NGA","428"],
+["Ô. VŨ ĐÌNH THĂNG","Ô. VŨ ĐÌNH THỊNH","429"],
+["Ô. VŨ ĐÌNH THĂNG","B. VŨ THỊ ĐIỆP","430"],
+["Ô. VŨ ĐÌNH THĂNG","Ô. VUC ĐÌNH THI","431"],
+["Ô. VŨ ĐÌNH DOANH","Ô. VŨ ĐÌNH DUẨN","432"],
+["Ô. VŨ ĐÌNH DOANH","Ô. VŨ ĐÌNH HOÀNG","433"],
+["Ô. VŨ ĐÌNH DOANH","Ô. VŨ ĐÌNH PHÁI","434"],
+["Ô. VŨ ĐÌNH DOANH","B. VŨ THỊ MẾN","435"],
+["Ô. VŨ ĐÌNH KHANH","Ô. VŨ TUẤN ANH","436"],
+["Ô. VŨ ĐÌNH KHANH","B. VŨ THỊ HUYỀN","437"],
+["Ô. VŨ ĐÌNH LỢI","Ô. VŨ ĐỨC ANH","438"],
+["Ô. VŨ ĐÌNH LỢI","Ô. VŨ ĐỨC MẠNH","439"],
+["Ô. VŨ ĐÌNH LỢI","Ô. VŨ ĐỨC DŨNG","440"],
+["Ô. VŨ ĐÌNH HÀ","B. VŨ THỊ LINH","441"],
+["Ô. VŨ ĐÌNH HÀ","Ô. VŨ ĐÌNH HOÀNG","442"],
+["Ô. VŨ ĐÌNH HÀ","B. VŨ THỊ CHI","443"],
+["Ô. VŨ ĐÌNH HOẠT","B. VŨ THỊ CHÂM","444"],
+["Ô. VŨ ĐÌNH HOẠT","Ô. VŨ GIA HUY","445"],
+["Ô. VŨ ĐÌNH HOẠT","Ô. VŨ GIA BẢO","446"],
+["Ô. VŨ ĐÌNH HƯNG","Ô. VŨ ĐÌNH DƯƠNG","447"],
+["Ô. VŨ ĐÌNH HƯNG","B. VŨ THỊ YẾN NHI","448"],
+["Ô. VŨ ĐÌNH HƯNG","B. VŨ THỊ MINH TÂM","449"],
+["Ô. VŨ ĐÌNH HẬU","Ô. VŨ ĐÌNH TRUNG","450"],
+["Ô. VŨ ĐÌNH DUẨN","Ô. VŨ ĐÌNH HÙNG","451"],
+["Ô. VŨ ĐÌNH DUẨN","Ô. VŨ MẠNH DŨNG","452"],
+["Ô. VŨ ĐÌNH HOÀNG","B. VŨ THỊ LINH","453"],
+["Ô. VŨ ĐÌNH HOÀNG","B. VŨ THỊ PHƯƠNG ANH","454"]
+        ];
+	//parents=[]
+	parent_cnt=0
+	function findNearParent(parents, parent_name) {
+		for(i=parents.length - 1; i>=0; --i) {
+			if (parents[i].name == parent_name) {
+				return parents[i]
+			}
+		}
+		return null
+	}
+	adjacencyList = data.reduce((acc, [parent, child, id]) => {
+	  parentNode = findNearParent(acc, parent)//acc.find((node) => node.id === parent);
+	  if (!parentNode) {
+		acc.push({id: 0, parent: null, name: parent})
+		//acc.push({ id: id, parent: parent, name: child });
+		parentNode = acc[acc.length - 1];
+	  }
+	  acc.push({ id: id, parent: parentNode.id, name: child });
+	  return acc;
+	}, []);
+	//console.log(JSON.stringify(adjacencyList, null, 2))
+	// Convert adjacency list to a hierarchical structure
+	function buildHierarchy(data) {
+		let root = {};
+		let lookup = {};
+
+		data.forEach(node => {
+			lookup[node.id] = {...node, children: []};
+			if (node.parent === null) {
+				root = lookup[node.id];
+			} else {
+				lookup[node.parent].children.push(lookup[node.id]);
+			}
+		});
+
+		return root;
+	}
+	data = adjacencyList
+	const dataLen = data.length
+
+	const root = buildHierarchy(data);
+	let showDetails = false;  // Flag to toggle visibility of details
+
+	// Set up the tree layout
+	margin = { top: 20, right: 120, bottom: 20, left: 120 }
+	const svg = d3.select("svg")
+		.append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	const tree = d3.tree().size([0, 0]);
+	const rootNode = d3.hierarchy(root);
+
+	tree(rootNode);
+
+	// Function to toggle children visibility
+	function toggleChildren(d) {
+		if (d.children) {
+			d._children = d.children;
+			d.children = null;
+		} else {
+			d.children = d._children;
+			d._children = null;
+		}
+	}
+
+	// Function to calculate maximum depth and total visible nodes
+	function calculateDimensions(root) {
+		let maxDepth = 0;
+		let visibleNodes = 0;
+
+		root.each(d => {
+			if (d.depth > maxDepth) maxDepth = d.depth;
+			if (d.children || d._children) visibleNodes++;
+		});
+
+		return { maxDepth, visibleNodes };
+	}
+	maxVisibleLevel = 12; // Specify the maximum level to show (1-based index)
+
+	// Function to toggle children visibility based on maxVisibleLevel
+	function toggleChildrenByLevel(d) {
+		if (d.depth >= maxVisibleLevel) {
+			d._children = d.children;
+			d.children = null;
+		} else {
+			if (d._children) {
+				d.children = d._children;
+				d._children = null;
+			}
+			if (d.children) {
+				d.children.forEach(toggleChildrenByLevel); // Recursively apply to children
+			}
+		}
+	}
+
+	function populateLevelSelector(maxDepth) {
+		const levelSelector = document.getElementById("levelSelector");
+
+		// Clear existing options
+		levelSelector.innerHTML = '';
+
+		// Populate with levels from 1 to maxDepth
+		for (let i = 1; i <= maxDepth; i++) {
+			const option = document.createElement("option");
+			option.value = i;
+			option.text = `Level ${i}`;
+			if (i === maxVisibleLevel) {
+				option.selected = true;
+			}
+			levelSelector.appendChild(option);
+		}
+
+		// Add event listener to update maxVisibleLevel on selection change
+		levelSelector.addEventListener("change", (event) => {
+			maxVisibleLevel = +event.target.value;
+			update(rootNode, false);  // Update the tree with the new maxVisibleLevel
+		});
+	}
+
+	populateLevelSelector(maxVisibleLevel);  // Update combo box with max depth
+	// Function to update the tree visualization
+	function update(source, byClick) {
+	//return;
+		if (!byClick)
+			toggleChildrenByLevel(rootNode)
+	    const { maxDepth, visibleNodes } = calculateDimensions(rootNode);
+		console.log({ maxDepth, visibleNodes })
+
+		// Adjust the height and width based on the depth and visible nodes
+		height = Math.max(200, (visibleNodes + 1) * 30); // Adjust height per node
+		width = Math.max(480, (maxDepth + 1) * 180); // Adjust width per depth level
+
+		// Update the SVG dimensions
+		d3.select("svg")
+			.attr("width", width+100)
+			.attr("height", height);
+
+		// Recompute the tree layout with the new dimensions
+		tree.size([height - 40, width - 180]);
+		tree(rootNode);
+		const nodes = rootNode.descendants();
+		const links = rootNode.links();
+
+		// Recompute the layout
+		tree(rootNode);
+
+		// Update the links
+		const link = svg.selectAll(".link")
+			.data(links, d => d.target);
+
+		link.enter().append("path")
+			.attr("class", "link")
+			.merge(link)
+			.attr("d", d => {
+				return "M" + d.target.y + "," + d.target.x
+					+ "C" + (d.target.y + d.source.y) / 2 + "," + d.target.x
+					+ " " + (d.target.y + d.source.y) / 2 + "," + d.source.x
+					+ " " + d.source.y + "," + d.source.x;
+			});
+
+		link.exit().remove();
+
+		// Update the nodes
+		const node = svg.selectAll(".node")
+			.data(nodes, d => d.id )//|| (d.id = ++i));
+
+		const nodeEnter = node.enter().append("g")
+			.attr("class", "node")
+			//.attr("transform", d => "translate(" + source.y + "," + source.x + ")")
+			.on("click", function(event, d) {
+				toggleChildren(d);
+				update(rootNode, true);
+			});
+
+		nodeEnter.append("circle")
+			.attr("r", 5);
+
+		nodeEnter.append("text")
+			.attr("dy", ".35em")
+			.attr("x", d => d.children || d._children ? -13 : 13)
+			.style("text-anchor", d => d.children || d._children ? "end" : "start")
+			.html(d => generateText(d));
+
+		const nodeUpdate = nodeEnter.merge(node);
+
+		nodeUpdate.transition()
+			//.duration(500)
+			.attr("transform", d => "translate(" + d.y + "," + d.x + ")");
+
+		node.exit().remove();
+	}
+
+	// Initial update
+	update(rootNode, false);
+
+	// Toggle details visibility
+	function toggleDetails() {
+		showDetails = !showDetails;
+		update(rootNode, true);  // Re-render the tree
+	}
+
+	// Function to generate text based on whether to show details
+	function generateText(d) {
+		weight = d._children ? "bold" : "normal"
+		additional_text = ""//d._children ? " (đã ẩn hậu duệ của người này)":""
+		if (showDetails) {
+			return `<tspan x="${d.children || d._children? -13 : 13}" dy="0.35em">${d.data.name}</tspan>
+					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.dob}</tspan>
+					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.pob}</tspan>`;
+		} else {
+			return `<tspan x="${d.children || d._children? -13 : 13}" dy="0.35em" font-weight="${weight}">${d.data.name}${additional_text}</tspan>`;
+		}
+	}
+	</script>
+</body>
+</html>
