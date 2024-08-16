@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organization Tree</title>
+    <title>Cây gia phả họ Vũ Đình thôn Tướng Loát</title>
     <style>
         .node {
             cursor: pointer;
@@ -28,8 +28,8 @@
     </style>
 </head>
 <body>
-    <button onclick="toggleDetails()">Toggle DOB/POB</button>
-	<label for="levelSelector">Select Max Visible Level: </label>
+    <button onclick="toggleDetails()">Ân/Hiện Ngày/Nơi sinh</button> | 
+	<label for="levelSelector">Chọn `ĐỜI`: </label>
     <select id="levelSelector">
         <!-- Levels will be populated by JavaScript -->
     </select>
@@ -600,7 +600,7 @@
 		for (let i = 1; i <= maxDepth; i++) {
 			const option = document.createElement("option");
 			option.value = i;
-			option.text = `Level ${i}`;
+			option.text = `Hậu duệ/đời thứ ${i}`;
 			if (i === maxVisibleLevel) {
 				option.selected = true;
 			}
@@ -696,14 +696,68 @@
 		update(rootNode, true);  // Re-render the tree
 	}
 
+	function getRandomDateOfBirth(startYear = 1800, endYear = new Date().getFullYear()) {
+		// Tạo mốc thời gian từ ngày 1/1 của startYear đến ngày hiện tại
+		const start = new Date(startYear, 0, 1).getTime();
+		const end = new Date().getTime();
+
+		// Sinh ngẫu nhiên một giá trị giữa start và end
+		const randomDate = new Date(start + Math.random() * (end - start));
+
+		// Trả về ngày tháng năm sinh ngẫu nhiên dưới dạng chuỗi
+		return randomDate.toISOString().split('T')[0]; // Chuỗi theo định dạng YYYY-MM-DD
+	}
+	
+	function getRandomPlaceOfBirth() {
+    // Mảng các nơi sinh có sẵn
+    const places = [
+        "Hà Nội",
+        "TP. Pleiku",
+        "Gia Lai",
+        "Tướng Loát",
+        "Nam Định",
+        "Tướng Loát",
+        "Nam Định",
+        "Tướng Loát",
+        "Nam Định",
+        "Tướng Loát",
+        "Nam Định",
+        "Tướng Loát",
+        "Nam Định",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Tướng Loát",
+        "Nam Định",
+        "Khác"
+    ];
+
+    // Sinh ngẫu nhiên một chỉ số trong mảng
+    const randomIndex = Math.floor(Math.random() * places.length);
+
+    // Trả về nơi sinh ngẫu nhiên
+    return places[randomIndex];
+}
+
 	// Function to generate text based on whether to show details
 	function generateText(d) {
 		weight = d._children ? "bold" : "normal"
 		additional_text = ""//d._children ? " (đã ẩn hậu duệ của người này)":""
+		random_dob = getRandomDateOfBirth()
+		random_pob = getRandomPlaceOfBirth()
 		if (showDetails) {
 			return `<tspan x="${d.children || d._children? -13 : 13}" dy="0.35em">${d.data.name}</tspan>
-					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.dob}</tspan>
-					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.pob}</tspan>`;
+					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.dob ? d.data.dob: random_dob}</tspan>
+					<tspan x="${d.children || d._children? -13 : 13}" dy="1.2em">${d.data.pob ? d.data.pob: random_pob}</tspan>`;
 		} else {
 			return `<tspan x="${d.children || d._children? -13 : 13}" dy="0.35em" font-weight="${weight}">${d.data.name}${additional_text}</tspan>`;
 		}
