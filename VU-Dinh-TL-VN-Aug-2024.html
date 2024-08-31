@@ -1,7 +1,7 @@
 <HTML>
 	<HEAD>
 		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
-		<TITLE>VU.DINH Tướng Loát - Yên Trị - Ý Yên</TITLE>
+		<TITLE>Vũ-Đình@Tướng-Loát.VN - Cây Gia phả của Gia đình tôi</TITLE>
 		<META NAME="Description" CONTENT="Vẽ cây gia đình của bạn trực tuyến và chia sẻ với người thân. Thêm ảnh và chi tiết tiểu sử. In cây gia đình hoặc tải xuống máy tính của riêng bạn.">
 <!--
 	This Family Echo file is Copyright (c) Familiality Ltd.
@@ -220,13 +220,13 @@
 		var staticMode=true;
 		var hideSidebar=false;
 		var noCentering=false;
-		var defaultZoom=0.5;
-		var defaultDetail='r.age.bd.pm.N.TJ';
+		var defaultZoom=0.543;
+		var defaultDetail='pm';
 		var defaultBirthName=0;
 		var defaultSurnameFirst=0;
 		var defaultMaleLeft=0;
-		var defaultCousins=2;
-		var defaultChildren=8;
+		var defaultCousins=3;
+		var defaultChildren=4;
 		var defaultParents=5;
 		var defaultColors={
 			back : '#FFFFFF',
@@ -2022,12 +2022,12 @@
 
 		function LF(_6d) {
 			Lf = _6d;
-			SS("footerlang", true);
+			//SS("footerlang", true);
 			var l = locale_value;
 			var _6f = new Intl.DisplayNames([l], {
 				type: "language"
 			});
-			ST("currentlang", _6f.of(l));
+			//ST("currentlang", _6f.of(l));
 			if ((locale_value != "en") && GC("langnote")) {
 				var _6f = new Intl.DisplayNames([l], {
 					type: "language"
@@ -2134,7 +2134,7 @@
 			}
 		}
 
-		function FRF(f, ap, fp) {
+		function FRF(f, ap, fp) {	// Làm mịn thông tin chi tiết của cây gia đình
 			for (var i in f) {
 				var p = f[i];
 				p.c = [];
@@ -2320,27 +2320,7 @@
 
 		function FSR(f, i, l, u, uu, d, dd, a, aa) {
 			if (i && f[i] && !f[i][l]) {
-				var p = f[i];
-				p[l] = true;
-				if (u) {
-					FSR(f, p.m, l, uu, uu, dd, dd, aa, aa);
-					FSR(f, p.f, l, uu, uu, dd, dd, aa, aa);
-					FSR(f, p.X, l, uu, uu, dd, dd, aa, aa);
-					FSR(f, p.Y, l, uu, uu, dd, dd, aa, aa);
-					FSR(f, p.K, l, uu, uu, dd, dd, aa, aa);
-					FSR(f, p.L, l, uu, uu, dd, dd, aa, aa);
-				}
-				if (d) {
-					for (var j = 0; j < p.c.length; j++) {
-						FSR(f, p.c[j], l, false, false, dd, dd, aa, aa);
-					}
-				}
-				if (a) {
-					FSR(f, p.es, l, uu, uu, dd, dd, aa, aa);
-					for (var pi in p.pc) {
-						FSR(f, pi, l, uu, uu, dd, dd, aa, aa);
-					}
-				}
+				
 			}
 		}
 
@@ -2975,7 +2955,7 @@
 			return gs[g] || gs[""];
 		}
 
-		function FPO(p, o) {
+		function FPO(p, o) {	// Tính toán ngày sinh
 			var d = FPD(p.b);
 			if ((!o) && d.y) {
 				return d.y * 10000 + d.m * 100 + d.d;
@@ -3013,7 +2993,7 @@
 			}
 		}
 
-		function FCC(p1, p2) {
+		function FCC(p1, p2) { // Hàm sắp xếp
 			var b1 = FPO(p1);
 			var b2 = FPO(p2);
 			if (b1 == b2) {
@@ -3137,13 +3117,13 @@
 			return false;
 		}
 
-		function FLA(f, i) {
+		function FLA(f, i) {	// Xâu chuỗi thông tin children
 			var ac = [];
 			var c = f[i].c;
 			for (var j = 0; j < c.length; j++) {
 				var cp = f[c[j]];
 				var pf = FPP(cp, i);
-				var oi = pf ? cp[pf] : null;
+				var oi = pf ? cp[pf] : null;	//Xác định mẹ
 				if (!(oi && f[oi])) {
 					FAA(ac, c[j]);
 				}
@@ -3159,7 +3139,7 @@
 				var cp = f[c[j]];
 				var pf = FPP(cp, i);
 				if (pf && cp[pf] == pi) {
-					FAA(tc, c[j]);
+					FAA(tc, c[j]);	// Gán family
 				}
 			}
 			FSC(f, tc);
@@ -3919,7 +3899,7 @@
 		}
 
 		function ERP(_1e) {
-			ERS(GV("newscript"));
+			ERS(GV("newscript"));	//convert tree raw data to Object (save to Efa)
 			if (Esd === null) {
 				Esd = "";
 				for (var j in Efa) {
@@ -3946,7 +3926,7 @@
 			}
 		}
 
-		function EUS(r, i, m, d, s) {
+		function EUS(r, i, m, d, s) {	// Main function
 			var pi = Evp = GV("viewpersonid");
 			var pm = viewMode = GV("viewmode");
 			if (r) {
@@ -4042,11 +4022,11 @@
 			if (navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)) {
 				SS("extradiv", GI("extradiv"));
 			}
-			SSE(Evp, viewMode);
+			SSE(Evp, viewMode);	//Show selected information (left panel)
 			if (i || m) {
 				ESB(viewMode + ":" + Evp);
 			}
-			if (d || (Evp != pi)) {
+			if (d || (Evp != pi)) { //Core
 				TRT(Efa, Evp, GV("personid"), Esd, NGD(), NGB(), NGS(), NGR(), NGL(), NGM(), NGH(), NGA(), NGC(), pi, GV("showzoom"), GV("showwidth"), GV("textsize"), s);
 				NRT();
 			}
@@ -4218,7 +4198,7 @@
 			}
 		}
 
-		function ERS(s) {
+		function ERS(s) { // convert `newscript` to family table
 			var c = ECL(s);
 			for (var j = 0; j < c.length; j++) {
 				var e = c[j];
@@ -4439,9 +4419,10 @@
 		}
 
 		function EZD(zd) {
-			var zf = Math.max(0.5, Math.min(4, GV("showzoom") * zd));
+			var zf = Math.max(0.543, Math.min(4, GV("showzoom") * zd));
 			SC("zoomfactor", zf);
 			SV("showzoom", zf);
+			//alert("" + zf + ":" + zd)
 			ERF();
 		}
 
@@ -5324,7 +5305,7 @@
 			return null;
 		}
 
-		function BFT(f, i, m, ch, ph, oh, fl, pg) {
+		function BFT(f, i, m, ch, ph, oh, fl, pg) {	//Tính toán dựng cây, ch~defaultChildren, ph~defaultParents, oh~defaultCousins
 			var p = f[i];
 			var hc = BGH(f, i);
 			if (ch && hc && !BGH(f, hc)) {
@@ -5847,6 +5828,7 @@
 		}
 
 		function TDS(yb, zf, wf, bn, ts) {
+		//alert(zf)
 			var ya = [yb.age, yb.bd, yb.j, yb.b, yb.v, yb.d, yb.y, yb.Z, yb.F, yb.U, yb.e, yb.e, yb.tku, yb.tku, yb.a, yb.a, yb.E, yb.I, yb.A];
 			var yc = 0;
 			for (var j = 0; j < ya.length; j++) {
@@ -5855,23 +5837,23 @@
 				}
 			}
 			var sz = {
-				Tew: parseInt(((yc || yb.r || yb.pm || yb.TJ) ? 100 : 80) * zf * wf),
+				Tew: parseInt(((yc || yb.r || yb.pm || yb.TJ) ? 50 : 40) * zf * wf),
 				Tnh: parseInt((yb["0p"] ? 0 : (((bn == 2) || yb.N) ? 50 : 40)) * zf),
-				Tph: parseInt((yb.r ? 100 : 0) * zf),
-				Tdh: parseInt(20 * yc * zf),
+				Tph: parseInt((yb.r ? 10 : 0) * zf),
+				Tdh: parseInt(2 * yc * zf),
 				Tmh: parseInt(40 * zf),
-				Ths: parseInt(20 * zf),
-				Tvs: parseInt(40 * zf),
+				Ths: parseInt(1 * zf),
+				Tvs: parseInt(60 * zf),
 				Tfs: (12 * zf * ts),
 				Tds: (10 * zf * ts),
-				partnerfontsize: (9 * zf * ts)
+				partnerfontsize: (1 * zf * ts)
 			};
-			sz.Teh = parseInt(Math.max(sz.Tnh + sz.Tph + sz.Tdh, sz.Tmh));
+			sz.Teh = parseInt(Math.max(sz.Tnh + sz.Tph + sz.Tdh, sz.Tmh))+5;
 			sz.Tep = Math.max(0, sz.Tew * 0.04);
 			return sz;
 		}
 
-		function TRD(d, y, ad, bn, sf, c, ls, o, oi, wp, pr, zf, wf, ts, _35) {
+		function TRD(d, y, ad, bn, sf, c, ls, o, oi, wp, pr, zf, wf, ts, _35) {	// Renderer??
 			var _36 = wp ? (ios ? 1920 : 19200) : 0;
 			var _37 = wp ? (ios ? 1200 : 12000) : 0;
 			var yb = {};
@@ -5938,6 +5920,13 @@
 					var v = document.createElement("div");
 					v.className = ((ss.d == 2) ? "ddashed" : ((ss.d == 1) ? "ddotted" : "dline")) + (ss.g ? " gray" : "");
 					var ok = ss.d ? 0 : ss.k;
+					//if (e.p.f == "START" || i == "START") 
+					{
+						if (v.className == 'dline'){
+							if(ok > 2)
+							console.log(ok)
+						}
+					}
 					var s = v.style;
 					s.width = ((r == l) ? ok : (r - l) * (sz.Tew + sz.Ths) + ok) + "px";
 					s.height = ((b == t) ? ok : (b - t) * (sz.Teh + sz.Tvs) - (ss.d ? 1 : 0)) + "px";
@@ -5947,7 +5936,8 @@
 						s.borderTopWidth = ss.k + "px";
 						s.borderLeftWidth = ss.k + "px";
 					}
-					o.appendChild(v);
+					o.appendChild(v);	//'<div class="ddotted" style="width: 0px; height: 39.25px; left: 19439px; top: 12230px; border-top-width: 2px; border-left-width: 2px;"></div>'
+					console.log(v.outerHTML)
 				}
 			}
 			for (var j = 0; j < d.p.length; j++) {
@@ -5965,8 +5955,10 @@
 				s.top = oy + (t * (sz.Teh + sz.Tvs)) + "px";
 				s.fontSize = sz.partnerfontsize + "px";
 				v.innerHTML = "<div class=\"" + (p.b ? "dpb" : "dpt") + "\">" + EH(TGP(yb, d.e[p.i].p, p.si)) + "</div>";
+				console.log(v.outerHTML)
 				o.appendChild(v);
 			}
+			//console.log(Object.keys(d.e))
 			for (var i in d.e) {
 				var e = d.e[i];
 				var rs = "";
@@ -5999,17 +5991,28 @@
 				var sx = ox + (e.x) * (sz.Tew + sz.Ths);
 				var sy = oy + (e.y) * (sz.Teh + sz.Tvs);
 				sh = Math.max(sh, sz.Tmh);
-				TRB(o, sx - (sz.Tew / 2), sy - (sh / 2), sz.Tew, sh, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
 				var v = document.createElement("div");
 				v.className = "di";
 				if (locale_rtl) {
 					v.dir = "rtl";
 				}
 				var s = v.style;
-				s.width = sz.Tew + "px";
-				s.height = sh + "px";
-				s.left = (sx - (sz.Tew / 2)) + "px";
+				//if (e.p.c.length>0 || e.p.f == "START" || i == "START") {
+				if ( e.p.f == "START" || i == "START") {
+					//console.log(e)
+				TRB(o, sx - (1.75*sz.Tew / 2), sy - (sh / 2), 1.75*sz.Tew, sh, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
+					s.width = 1.75*sz.Tew + "px";
+					s.height = sh + "px";
+				s.left = (sx - (1.75*sz.Tew / 2)) + "px";
 				s.top = (sy - (sh / 2)) + "px";
+				} else {
+				TRB(o, sx - (sh / 2), sy - (sz.Tew / 16), sh, 1.75*sz.Tew, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
+					s.height = 1.75*sz.Tew + "px";
+					s.width = sh + "px";
+					s['writing-mode'] = "tb";
+				s.left = (sx - (sh / 2)) + "px";
+				s.top = (sy - (sz.Tew / 16)) + "px";
+				}
 				if (wp) {
 					v.onmousedown = TCT;
 					v.id = i;
@@ -6392,7 +6395,7 @@
 			return (o.ps && i) ? o.ps[i] : null;
 		}
 
-		function TRT(f, i, m, y, ad, bn, sf, c, l, fl, ch, ph, co, pi, zf, wf, ts, s) {
+		function TRT(f, i, m, y, ad, bn, sf, c, l, fl, ch, ph, co, pi, zf, wf, ts, s) {	//Most important??
 			var o = GE("treebg");
 			var _b9 = null;
 			if (TFE(o, i)) {
@@ -9761,7 +9764,7 @@
 				<TD STYLE="border-bottom:solid #666666 1px; padding:8px;" VALIGN="middle">
 					<FORM NAME="topform" ACTION="./" METHOD="POST">
 						<TABLE WIDTH="100%" HEIGHT="100%" CELLSPACING=0 CELLPADDING=0><TR VALIGN="middle">
-							<TD NOWRAP WIDTH="5%"><FONT STYLE="font-size:28px;">		<SPAN ID="lfamilyname">VU.DINH@TL.VN</SPAN>&nbsp;<SPAN ID="lfamilyinfo"></SPAN> <SPAN ID="lfamilylabels"></SPAN>
+							<TD NOWRAP WIDTH="5%"><FONT STYLE="font-size:28px;">		<SPAN ID="lfamilyname">Gia đình của tôi</SPAN>&nbsp;<SPAN ID="lfamilyinfo"></SPAN> <SPAN ID="lfamilylabels"></SPAN>
 		
 		<IFRAME ID="backframe" WIDTH="1" HEIGHT="1" FRAMEBORDER="0" SCROLLING="no"></IFRAME>
 </FONT></TD>
@@ -10258,7 +10261,7 @@ iPIBTR	^OHTJ6	fKRYT4	pB. VŨ THỊ PHƯƠNG ANH	gf
 
 ">
 		<INPUT TYPE="hidden" ID="personid" NAME="personid" VALUE="">
-		<INPUT TYPE="hidden" ID="viewpersonid" NAME="viewpersonid" VALUE="START">
+		<INPUT TYPE="hidden" ID="viewpersonid" NAME="viewpersonid" VALUE="DKWRQ">
 		<INPUT TYPE="hidden" ID="viewmode" NAME="viewstate" VALUE="view">
 		<INPUT TYPE="hidden" ID="name" NAME="name" VALUE="">
 		<INPUT TYPE="hidden" ID="email" NAME="email" VALUE="">
@@ -10268,7 +10271,7 @@ iPIBTR	^OHTJ6	fKRYT4	pB. VŨ THỊ PHƯƠNG ANH	gf
 0 HEAD
 1 SOUR Family Echo
 2 WWW https://www.familyecho.com/
-1 FILE VU.DINH@TL.VN
+1 FILE Gia đình của tôi
 1 DATE 24 AUG 2024
 1 DEST ANSTFILE
 1 GEDC
@@ -13866,8 +13869,8 @@ iPIBTR	^OHTJ6	fKRYT4	pB. VŨ THỊ PHƯƠNG ANH	gf
 			
 			<DIV ID="main" CLASS="fullsize" STYLE="position:relative;" onMouseDown="EMD();" onTouchStart="EMD();">
 
-				<DIV ID="treediv" CLASS="dright" STYLE="top:0px; height:100%; overflow:hidden; background:solid;">
-					<DIV ID="treemargin" CLASS="marginon" STYLE="cursor:move;">
+				<DIV ID="treediv" CLASS="dright" STYLE="top:0px; height:100%; overflow:hidden; ">
+					<DIV ID="treemargin" CLASS="marginon" STYLE="cursor:move;background-image:url('https://datdia.s3.ap-southeast-1.amazonaws.com/ongbata_background/phong3.jpg');">
 						<DIV ID="treebg" CLASS="fullsize rbody" STYLE="position:relative;"></DIV>
 					</DIV>
 				</DIV>
@@ -13957,7 +13960,7 @@ iPIBTR	^OHTJ6	fKRYT4	pB. VŨ THỊ PHƯƠNG ANH	gf
 								&ndash;
 								<IMG SRC="data:;base64,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"
 								CLASS="icon" STYLE="cursor:pointer;" ALIGN="ABSMIDDLE" TITLE="Thu nhỏ" onClick="ECZ(false);">
-								<INPUT ID="showzoom" TYPE="range" MIN="0.5" MAX="4.0" STEP="0.001" STYLE="width:96px;" onInput="ESZ();" onChange="ESZ();">
+								<INPUT ID="showzoom" TYPE="range" MIN="0.543" MAX="4.0" STEP="0.001" STYLE="width:96px;" onInput="ESZ();" onChange="ESZ();">
 								<IMG SRC="data:;base64,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"
 								CLASS="icon" STYLE="cursor:pointer;" ALIGN="ABSMIDDLE" TITLE="Phóng to" onClick="ECZ(true);"> &ndash;
 								<SPAN ID="backto">
