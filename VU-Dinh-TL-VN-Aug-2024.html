@@ -5937,7 +5937,7 @@
 						s.borderLeftWidth = ss.k + "px";
 					}
 					o.appendChild(v);	//'<div class="ddotted" style="width: 0px; height: 39.25px; left: 19439px; top: 12230px; border-top-width: 2px; border-left-width: 2px;"></div>'
-					console.log(v.outerHTML)
+					//console.log(v.outerHTML)
 				}
 			}
 			for (var j = 0; j < d.p.length; j++) {
@@ -5955,7 +5955,7 @@
 				s.top = oy + (t * (sz.Teh + sz.Tvs)) + "px";
 				s.fontSize = sz.partnerfontsize + "px";
 				v.innerHTML = "<div class=\"" + (p.b ? "dpb" : "dpt") + "\">" + EH(TGP(yb, d.e[p.i].p, p.si)) + "</div>";
-				console.log(v.outerHTML)
+				//console.log(v.outerHTML)
 				o.appendChild(v);
 			}
 			//console.log(Object.keys(d.e))
@@ -5997,8 +5997,9 @@
 					v.dir = "rtl";
 				}
 				var s = v.style;
-				//if (e.p.c.length>0 || e.p.f == "START" || i == "START") {
-				if ( e.p.f == "START" || i == "START") {
+				var cur_person_id = GV("viewpersonid");
+				//if ( e.p.f == "START" || i == "START") {
+				if ( e.p.f == "START" || i == "START" || (e.p.c.length>0 && (e.p.f == cur_person_id || i == cur_person_id)) || e.p.c.includes(cur_person_id)) {
 					//console.log(e)
 				TRB(o, sx - (1.75*sz.Tew / 2), sy - (sh / 2), 1.75*sz.Tew, sh, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
 					s.width = 1.75*sz.Tew + "px";
