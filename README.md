@@ -1,6 +1,6 @@
 # Cây gia phả họ Vũ Đình thôn Tướng Loát, Yên Trị, Ý Yên, Nam Định
 
-## [Bản mới nhất](https://doanva84.github.io/vu.org/VU-Dinh-TL-VN-Aug-2024.html)
+## [Bản mới nhất](https://doanva84.github.io/vu.org/VU-Dinh-TL-VN-Nov-2024.html)
 
 ## Cũ hơn
 
