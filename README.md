@@ -10,6 +10,7 @@
 ## Bản cứng (để in/xem trên máy cá nhân)
 
 * [Đầy đủ](https://doanva84.github.io/vu.org/All.pdf)
-* [Ngành 1](https://doanva84.github.io/vu.org/N1.pdf)
-* [Ngành 2](https://doanva84.github.io/vu.org/N2.pdf)
-* [Ngành 4](https://doanva84.github.io/vu.org/N4.pdf)
+* [Ngành 1](https://doanva84.github.io/vu.org/Nganh1-giayA1.pdf)
+* [Ngành 2](https://doanva84.github.io/vu.org/Nganh2-giayA2.pdf)
+* [Ngành 3](https://doanva84.github.io/vu.org/Nganh3-giayA4.pdf)
+* [Ngành 4](https://doanva84.github.io/vu.org/Nganh4-giayA1.pdf)
