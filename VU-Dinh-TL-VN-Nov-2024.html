@@ -245,12 +245,12 @@ a.fattachpmlink:hover {text-decoration:none;}
 			living : '#000000',
 			deceased : '#777777'
 		};
-		var defaultWidth=0.75;
-		var defaultTextSize=0.75;
+		var defaultWidth=1;
+		var defaultTextSize=1;
 		var defaultLines={
-			current : 'thick',
-			otherpartner : 'medium',
-			biological : 'medium',
+			current : 'thin',
+			otherpartner : 'thin',
+			biological : 'thin',
 			otherparent : 'gray'
 		};
 		--></SCRIPT>
@@ -5371,19 +5371,31 @@ var e=d.e[i];
 TAE(od,e.p.i,e.p,e.x+dx,e.y+dy,e.k);
 }
 }
-function TDS(yb,zf,wf,bn,ts){
-var ya=[yb.age,yb.bd,yb.j,yb.b,yb.v,yb.d,yb.y,yb.Z,yb.F,yb.U,yb.e,yb.e,yb.tku,yb.tku,yb.a,yb.a,yb.E,yb.I,yb.A];
-var yc=0;
-for(var j=0;j<ya.length;j++){
-if(ya[j]){
-yc++;
-}
-}
-var sz={Tew:parseInt(((yc||yb.r||yb.pm||yb.TJ)?100:80)*zf*wf),Tnh:parseInt((yb["0p"]?0:(((bn==2)||yb.N)?50:40))*zf),Tph:parseInt((yb.r?100:0)*zf),Tdh:parseInt(20*yc*zf),Tmh:parseInt(40*zf),Ths:parseInt(20*zf),Tvs:parseInt(40*zf),Tfs:(12*zf*ts),Tds:(10*zf*ts),partnerfontsize:(9*zf*ts)};
-sz.Teh=parseInt(Math.max(sz.Tnh+sz.Tph+sz.Tdh,sz.Tmh));
-sz.Tep=Math.max(0,sz.Tew*0.04);
-return sz;
-}
+		function TDS(yb, zf, wf, bn, ts) {
+		//alert(zf)
+			var ya = [yb.age, yb.bd, yb.j, yb.b, yb.v, yb.d, yb.y, yb.Z, yb.F, yb.U, yb.e, yb.e, yb.tku, yb.tku, yb.a, yb.a, yb.E, yb.I, yb.A];
+			var yc = 0;
+			for (var j = 0; j < ya.length; j++) {
+				if (ya[j]) {
+					yc++;
+				}
+			}
+			var sz = {
+				Tew: parseInt(((yc || yb.r || yb.pm || yb.TJ) ? 50 : 40) * zf * wf),
+				Tnh: parseInt((yb["0p"] ? 0 : (((bn == 2) || yb.N) ? 50 : 40)) * zf),
+				Tph: parseInt((yb.r ? 10 : 0) * zf),
+				Tdh: parseInt(2 * yc * zf),
+				Tmh: parseInt(40 * zf),
+				Ths: parseInt(1 * zf),
+				Tvs: parseInt(60 * zf),
+				Tfs: (12 * zf * ts),
+				Tds: (10 * zf * ts),
+				partnerfontsize: (1 * zf * ts)
+			};
+			sz.Teh = parseInt(Math.max(sz.Tnh + sz.Tph + sz.Tdh, sz.Tmh))+5;
+			sz.Tep = Math.max(0, sz.Tew * 0.04);
+			return sz;
+		}
 function TRD(d,y,ad,bn,sf,c,ls,o,oi,wp,pr,zf,wf,ts,_35){
 var _36=wp?(ios?1920:19200):0;
 var _37=wp?(ios?1200:12000):0;
@@ -5507,17 +5519,32 @@ sh+=sz.Tdh;
 var sx=ox+(e.x)*(sz.Tew+sz.Ths);
 var sy=oy+(e.y)*(sz.Teh+sz.Tvs);
 sh=Math.max(sh,sz.Tmh);
-TRB(o,sx-(sz.Tew/2),sy-(sh/2),sz.Tew,sh,e.k?3:1,(e.p.g=="f")?c.female:((e.p.g=="m")?c.male:(((e.p.g||"").charAt(0)=="o")?c.other:"#FFFFFF")),null);
+//TRB(o,sx-(sz.Tew/2),sy-(sh/2),sz.Tew,sh,e.k?3:1,(e.p.g=="f")?c.female:((e.p.g=="m")?c.male:(((e.p.g||"").charAt(0)=="o")?c.other:"#FFFFFF")),null);
 var v=document.createElement("div");
 v.className="di";
 if(locale_rtl){
 v.dir="rtl";
 }
-var s=v.style;
-s.width=sz.Tew+"px";
-s.height=sh+"px";
-s.left=(sx-(sz.Tew/2))+"px";
-s.top=(sy-(sh/2))+"px";
+
+
+				var s = v.style;
+				//if (e.p.c.length>0 || e.p.f == "START" || i == "START") {
+				if ( e.p.f == "START" || i == "START") {
+					//console.log(e)
+				TRB(o, sx - (1.75*sz.Tew / 2), sy - (sh / 2), 1.75*sz.Tew, sh, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
+					s.width = 1.75*sz.Tew + "px";
+					s.height = sh + "px";
+				s.left = (sx - (1.75*sz.Tew / 2)) + "px";
+				s.top = (sy - (sh / 2)) + "px";
+				} else {
+				TRB(o, sx - (sh / 2), sy - (sz.Tew / 16), sh, 1.75*sz.Tew, e.k ? 3 : 1, (e.p.g == "f") ? c.female : ((e.p.g == "m") ? c.male : (((e.p.g || "").charAt(0) == "o") ? c.other : "#FFFFFF")), null);
+					s.height = 1.75*sz.Tew + "px";
+					s.width = sh + "px";
+					s['writing-mode'] = "tb";
+				s.left = (sx - (sh / 2)) + "px";
+				s.top = (sy - (sz.Tew / 16)) + "px";
+				}
+
 if(wp){
 v.onmousedown=TCT;
 v.id=i;
